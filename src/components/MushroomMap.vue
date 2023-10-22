@@ -7,49 +7,63 @@
       @update:zoom="zoomUpdated"
       @update:center="centerUpdated"
   >
-    <l-tile-layer
-        :url="url"
-    ></l-tile-layer>
+    <l-tile-layer :url="url"/>
+
 
     <l-marker
         v-for="marker in markers"
         :key="marker.id"
         :lat-lng="marker.latLng"
     ></l-marker>
+
+    <l-geo-json v-if="geodataJSON" :geojson="geodataJSON"></l-geo-json>
+
   </l-map>
 
 </template>
 
 <script>
-import { LMap, LTileLayer, LMarker } from '@vue-leaflet/vue-leaflet';
+import {LMap, LTileLayer, LMarker, LGeoJson} from '@vue-leaflet/vue-leaflet';
 import 'leaflet/dist/leaflet.css';
+import {getMushroomLocations} from "@/services/mushroomService";
 
 export default {
   name: "MushroomMap",
+
   components:{
     LMarker,
     LMap,
-    LTileLayer
+    LTileLayer,
+    LGeoJson
   },
   data() {
     return {
-      url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-      center: [59.396153, 24.657925],
-      zoom: 15,
-      markers: [
-            { id: 1, latLng: [59.396153, 24.657925] },
-            { id: 2, latLng: [59.397153, 24.658925] },
-            { id: 3, latLng: [59.398153, 24.659925] },
-            { id: 4, latLng: [59.396653, 24.656925] },
-            { id: 5, latLng: [59.398153, 24.655925] },
-            { id: 6, latLng: [59.398153, 24.652925] },
-          ]
+      geodataJSON:null,
+      center: [59.437343162284265, 24.745249311520467],  // Define a default center
+      zoom: 18,        // Define a default zoom level
+      url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', // Define a default tile layer URL
+      markers: [],     // Define markers if you are using them
+    }
+  },
+
+  async mounted() {
+    try {
+      const response = await getMushroomLocations();
+      if (response) {
+        console.log("GeoJSON Data:", response);
+        this.geodataJSON = response;
+      } else {
+        console.error("Received undefined response from getMushroomLocations");
+      }
+    } catch (error) {
+      console.error("Error fetching mushroom locations:", error);
     }
   },
   methods:{
+
       zoomUpdated(zoom) {
       this.zoom = zoom;
-      console.log(this.markers)
+      console.log(this.zoom)
     },
     centerUpdated(center) {
       this.center = center;
