@@ -10,4 +10,17 @@ const getMushroomLocations = async () => {
     }
 }
 
-export { getMushroomLocations };
+const addMushroomLocation = async (location) => {
+
+    try {
+        const response = await axios.post('http://localhost:8080/api/mushroom-locations', location);
+        return response.data;
+    } catch (error) {
+        console.error('Error while adding mushroom location ', error);
+        throw error;
+    }
+
+
+}
+
+export { getMushroomLocations, addMushroomLocation };

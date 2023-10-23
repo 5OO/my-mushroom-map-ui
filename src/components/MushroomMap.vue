@@ -6,6 +6,7 @@
       ref="map"
       @update:zoom="zoomUpdated"
       @update:center="centerUpdated"
+      @click = "onMapClick"
   >
     <l-tile-layer :url="url"/>
 
@@ -25,7 +26,7 @@
 <script>
 import {LMap, LTileLayer, LMarker, LGeoJson} from '@vue-leaflet/vue-leaflet';
 import 'leaflet/dist/leaflet.css';
-import {getMushroomLocations} from "@/services/mushroomService";
+import {getMushroomLocations, addMushroomLocation} from "@/services/mushroomService";
 
 export default {
   name: "MushroomMap",
@@ -67,6 +68,26 @@ export default {
     },
     centerUpdated(center) {
       this.center = center;
+    },
+    async onMapClick(event) {
+      const {lat, lng} = event.latlng;
+      const name = prompt("Enter the mushroom name: ");
+      const description = prompt("Enter the mushroom description: ");
+      if (name && description) {
+        const newLocation = { name, x: lng, y: lat, description};
+        try {
+          const addedLocation = await addMushroomLocation(newLocation);
+          if (addedLocation) {
+            this.markers.push({
+              id: addedLocation.properties.id,
+              latLng: [lat, lng],
+            });
+          }
+        } catch (error) {
+          console.error("Error adding mushroom location: ", error);
+        }
+
+      }
     },
   }
 }
