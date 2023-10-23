@@ -40,8 +40,8 @@ export default {
   data() {
     return {
       geodataJSON:null,
-      center: [59.437343162284265, 24.745249311520467],  // Define a default center
-      zoom: 18,        // Define a default zoom level
+      center: [59.08217826154092, 24.713826028818772],  // Define a default center
+      zoom: 10,        // Define a default zoom level
       url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', // Define a default tile layer URL
       markers: [],     // Define markers if you are using them
     }
